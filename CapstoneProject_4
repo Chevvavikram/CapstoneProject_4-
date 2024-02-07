@@ -1,0 +1,293 @@
+                              Capstone Final project 4
+1.	Implement below capstone project using Selenium with Java concepts (Implement BDD Framework)
+Scenario 1:
+Implement mini project using Gherkin language
+1. Launch a below URL and verify the title of the Page http://the-internet.herokuapp.com/
+2. Click on A/B Testing link and verify the text on the page as “A/B Test Variation 1” using TestNG Assertions
+3. Navigate back to Home page and click on dropdown link
+4. And Select Option1 value form drop down and confirm if its selected or not
+5. Navigate back to Home Page and Click on Frames
+6. Verify the below hyperlinks are presented on the Frames Page
+a. Nested Frames
+b. iFrame
+Note:
+Please implement below concepts as mandatory while designing this Case Study
+1. Create a Maven Project and update POM.XML accordingly to implement this Mini Project and add BDD related dependencies.
+2. Create a branch name – CapstoneProject_4 and implement your code in that branch. After coding is completed commit and push your code into that branch.
+3. As implementing in BDD Framework create Feature File
+4. Create Step definition File and corresponding Step Files
+5. Create TestNG.xml and run the test cases from TestNG.xml
+6. Use OOPs concepts to implement this framework and maintain Base Case separately
+7. Use TestNG Assertions to validate expected results
+<dependencies>
+    <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>3.141.59</version>
+    </dependency>
+    <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>7.3.0</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>tech.gusavila92</groupId>
+        <artifactId>gherkin-maven-plugin</artifactId>
+        <version>1.2.0</version>
+    </dependency>
+</dependencies>
+
+Created: ab_testing. feature
+
+Feature: A/B Testing
+  Scenario: Verify A/B testing page
+    Given User is on the home page
+    When User clicks on A/B Testing link
+    Then Page title should be "A/B Test Variation 1"
+    And User should see "A/B Test Variation 1" text on the page
+    When User navigates back to home page
+    And User clicks on dropdown link
+    Then User should see "Option 1" in the dropdown
+    When User navigates back to home page
+    And User clicks on Frames link
+    Then User should see "Nested Frames" and "iFrame" links on the Frames page
+
+
+Created AbTestingSteps.java class
+
+package stepDefinitions;
+
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+
+public class AbTestingSteps {
+
+    private WebDriver driver;
+
+    @Given("User is on the home page")
+    public void user_is_on_the_home_page() {
+        System.setProperty("webdriver.chrome.driver", "/lib/chromeDriver/chromedriver.exe ");
+        driver = new ChromeDriver();
+        driver.get("http://the-internet.herokuapp.com/");
+    }
+
+    @When("User clicks on A/B Testing link")
+    public void user_clicks_on_a_b_testing_link() {
+        WebElement abTestingLink = driver.findElement(By.linkText("A/B Testing"));
+        abTestingLink.click();
+    }
+
+    @Then("Page title should be {string}")
+    public void page_title_should_be(String expectedTitle) {
+        Assert.assertEquals(driver.getTitle(), expectedTitle);
+    }
+
+    @Then("User should see {string} text on the page")
+    public void user_should_see_text_on_the_page(String expectedText) {
+        WebElement actualText = driver.findElement(By.tagName("h3"));
+        Assert.assertEquals(actualText.getText(), expectedText);
+    }
+
+    @When("User clicks on dropdown link")
+    public void user_clicks_on_dropdown_link() {
+        WebElement dropdownLink = driver.findElement(By.linkText("Dropdown"));
+        dropdownLink.click();
+    }
+
+    @Then("User should see {string} in the dropdown")
+    public void user_should_see_in_the_dropdown(String expectedOption) {
+        WebElement dropdown = driver.findElement(By.id("dropdown"));
+        Assert.assertTrue(dropdown.getText().contains(expectedOption));
+    }
+
+    @When("User navigates back to home page")
+    public void user_navigates_back_to_home_page() {
+        driver.navigate().back();
+    }
+
+    @When("User clicks on Frames link")
+    public void user_clicks_on_frames_link() {
+        WebElement framesLink = driver.findElement(By.linkText("Frames"));
+        framesLink.click();
+    }
+
+    @Then("User should see {string} and {string} links on the Frames page")
+    public void user_should_see_and_links_on_the_frames_page(String link1, String link2) {
+        WebElement nestedFramesLink = driver.findElement(By.linkText(link1));
+        Assert.assertTrue(nestedFramesLink.isDisplayed());
+
+        WebElement iframeLink = driver.findElement(By.linkText(link2));
+        Assert.assertTrue(iframeLink.isDisplayed());
+    }
+}
+
+Created TestNG.xml file
+
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="BDD Test Suite">
+    <test name="AbTestingTest">
+        <classes>
+            <class name="stepDefinitions.AbTestingSteps"/>
+        </classes>
+    </test>
+</suite>
+
+
+
+2. Implement below same capstone project using Selenium with Python concepts (Use pytest framework) and use fixtures.
+Scenario 2:
+Implement mini project of Web Application in Visual Studio Code editor
+1. Launch a below URL and verify the title of the Page http://the-internet.herokuapp.com/
+2. Click on Checkboxes link and verify the text on the page as “Checkboxes” using TestNG Assertions
+a. And verify checkbox 1 is not checked and checkbox 2 is checked (Write generic functions to validate this)
+3. Navigate back to Home page and click on File Upload link
+4. Verify the text on the Page as “File Uploader” and click on Choose File button to select the file and Click on Upload button.
+ 
+
+pip install selen pytest pytest-selenium
+Created new file as conftest.py
+import pytest
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+
+@pytest.fixture(scope="module")
+def driver():
+    service = Service(‘/lib/chromeDriver/chromedriver.exe’)
+    driver = webdriver.Chrome(service=service)
+    driver.maximize_window()
+    yield driver
+    driver.quit()
+Created new file again as  test_checkboxes.py
+
+def test_checkboxes(driver):
+    driver.get('http://the-internet.herokuapp.com/')
+    assert driver.title == 'The Internet'
+
+    checkboxes_link = driver.find_element('xpath', '//a[text()="Checkboxes"]')
+    checkboxes_link.click()
+
+    assert driver.find_element('xpath', '//div[@class="example"]/h4').text == 'Checkboxes'
+
+    checkbox1 = driver.find_element('xpath', '//input[@type="checkbox"][1]')
+    checkbox2 = driver.find_element('xpath', '//input[@type="checkbox"][2]')
+
+    assert not checkbox1.is_selected()
+    assert checkbox2.is_selected()
+
+    driver.find_element('xpath', '//a[text()="Home"]').click()
+
+    file_upload_link = driver.find_element('xpath', '//a[text()="File Upload"]')
+    file_upload_link.click()
+
+    assert driver.find_element('xpath', '//div[@class="example"]/h4').text == 'File Uploader'
+
+    choose_file_button = driver.find_element('id', 'file-upload')
+    choose_file_button.send_keys('path/to/your/file.txt')
+
+    upload_button = driver.find_element('id', 'file-submit')
+    upload_button.click()
+
+Implement below Case Study using POSTMAN API Automation
+Create a Rest-Assured Project and Implement a generic functions to read data from MS-Excel Sheets.
+And use get method to trigger an API. URL: https://restcountries.com/v3.1/translation/{translation}
+https://restcountries.com/v3.1/translation/germany
+https://restcountries.com/v3.1/translation/alemania
+https://restcountries.com/v3.1/translation/Saksamaa
+<dependency>
+    <groupId>io.rest-assured</groupId>
+    <artifactId>rest-assured-all</artifactId>
+    <version>4.2.0</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency>
+    <groupId>io.rest-assured</groupId>
+    <artifactId>json-path</artifactId>
+    <version>4.2.0</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency>
+    <groupId>io.rest-assured</groupId>
+    <artifactId>xml-path</artifactId>
+    <version>4.2.0</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency>
+    <groupId>io.rest-assured</groupId>
+    <artifactId>json-schema-validator</artifactId>
+    <version>4.2.0</version>
+    <scope>test</scope>
+</dependency>
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+public class ExcelReader {
+
+    public static Map<String, String> readData(int rowNumber) {
+        Map<String, String> data = new HashMap<>();
+        try {
+            FileInputStream fis = new FileInputStream(new File("data.xlsx"));
+            Workbook workbook = new XSSFWorkbook(fis);
+            Sheet sheet = workbook.getSheet("Sheet1");
+            Row row = sheet.getRow(rowNumber);
+            for (Cell cell : row) {
+                data.put(cell.getStringCellValue(), cell.getStringCellValue());
+            }
+            workbook.close();
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+}
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+public class RestAssuredClient {
+
+    public static String getTranslation(String translation) {
+        Response response = RestAssured.get("https://restcountries.com/v3.1/translation/" + translation);
+        return response.asString();
+    }
+}
+
+import org.testng.annotations.Test;
+
+import java.util.Map;
+
+import static org.testng.Assert.assertEquals;
+
+public class RestAssuredTest {
+
+    @Test
+    public void testTranslation() {
+        Map<String, String> data = ExcelReader.readData(1);
+        String translation = data.get("translation");
+        String expectedResponse = data.get("expectedResponse");
+        String actualResponse = RestAssuredClient.getTranslation(translation);
+        assertEquals(actualResponse, expectedResponse);
+    }
+}
+
+GITHUB:
+https://github.com/Chevvavikram/CapstoneProject_4-.git
+
+ 
